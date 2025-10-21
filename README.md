@@ -15,8 +15,12 @@ post about it
 
 Full `go doc` style documentation for the project can be viewed online without
 installing this package by using the excellent GoDoc site here:
-https://pkg.go.dev/github.com/davecgh/go-spew/spew
 
+```
+https://pkg.go.dev/github.com/davecgh/go-spew/spew
+# New
+https://pkg.go.dev/github.com/yonomesh/spew-go/spew
+```
 ## Installation
 
 ```bash
