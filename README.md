@@ -1,11 +1,10 @@
-go-spew
+Spew-go
 =======
 
-Go-spew implements a deep pretty printer for Go data structures to aid in
+Spew-go implements a deep pretty printer for Go data structures to aid in
 debugging.  A comprehensive suite of tests with 100% test coverage is provided
 to ensure proper functionality.  See `test_coverage.txt` for the gocov coverage
-report.  Go-spew is licensed under the liberal ISC license, so it may be used in
-open source or commercial projects.
+report.  
 
 If you're interested in reading about how this package came to life and some
 of the challenges involved in providing a deep pretty printer, there is a blog
@@ -14,15 +13,9 @@ post about it
 
 ## Documentation
 
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/davecgh/go-spew/spew)
-
 Full `go doc` style documentation for the project can be viewed online without
 installing this package by using the excellent GoDoc site here:
-http://godoc.org/github.com/davecgh/go-spew/spew
-
-You can also view the documentation locally once the package is installed with
-the `godoc` tool by running `godoc -http=":6060"` and pointing your browser to
-http://localhost:6060/pkg/github.com/davecgh/go-spew/spew
+https://pkg.go.dev/github.com/davecgh/go-spew/spew
 
 ## Installation
 
@@ -191,7 +184,3 @@ environments where the unsafe package is not available.  By default, it will
 operate in this mode on Google App Engine and when compiled with GopherJS.  The
 "safe" build tag may also be specified to force the package to build without
 using the unsafe package.
-
-## License
-
-Go-spew is licensed under the [copyfree](http://copyfree.org) ISC License.
