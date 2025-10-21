@@ -20,7 +20,7 @@ const (
 	UnsafeDisabled = false
 
 	// ptrSize is the size of a pointer on the current arch.
-	ptrSize = unsafe.Sizeof((*byte)(nil))
+	ptrSize = unsafe.Sizeof((*uintptr)(nil))
 )
 
 type flag uintptr
@@ -31,7 +31,7 @@ var (
 	flagRO flag
 
 	// flagAddr indicates whether the address of the reflect.Value's
-	// value may be taken.
+	// value may be obtained.
 	flagAddr flag
 )
 
