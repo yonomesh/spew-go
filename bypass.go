@@ -1,16 +1,4 @@
-// Copyright (c) 2015-2016 Dave Collins <dave@davec.name>
-//
-// Permission to use, copy, modify, and distribute this software for any
-// purpose with or without fee is hereby granted, provided that the above
-// copyright notice and this permission notice appear in all copies.
-//
-// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-// ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-// ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-// OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+//go:build !js && !appengine && !safe && !disableunsafe && go1.4
 
 // NOTE: Due to the following build constraints, this file will only be compiled
 // when the code is not running on Google App Engine, compiled by GopherJS, and
@@ -18,7 +6,6 @@
 // tag is deprecated and thus should not be used.
 // Go versions prior to 1.4 are disabled because they use a different layout
 // for interfaces which make the implementation of unsafeReflectValue more complex.
-// +build !js,!appengine,!safe,!disableunsafe,go1.4
 
 package spew
 
