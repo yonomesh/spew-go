@@ -26,3 +26,9 @@ type ConfigState struct {
 	SpewKeys bool
 }
 ```
+
+# Version
+
+```
+git tag -a demo-20251021 -m "demo version"
+```

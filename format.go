@@ -9,12 +9,16 @@ import (
 )
 
 // supportedFlags is a list of all the character flags supported by fmt package.
+//
+// ref https://github.com/golang/go/blob/6e676ab2b809d46623acb5988248d95d1eb7939c/src/fmt/doc.go#L136-L151
 const supportedFlags = "0-+# "
 
 // formatState implements the fmt.Formatter interface and contains information
 // about the state of a formatting operation.  The NewFormatter function can
 // be used to get a new Formatter which can be used directly as arguments
 // in standard fmt package printing calls.
+//
+// fmt.Formatter ref https://github.com/golang/go/blob/6e676ab2b809d46623acb5988248d95d1eb7939c/src/fmt/print.go#L54
 type formatState struct {
 	value          any
 	fs             fmt.State
@@ -24,50 +28,33 @@ type formatState struct {
 	cs             *ConfigState
 }
 
-// buildDefaultFormat recreates the original format string without precision
-// and width information to pass in to fmt.Sprintf in the case of an
-// unrecognized type.  Unless new types are added to the language, this
-// function won't ever be called.
-func (f *formatState) buildDefaultFormat() (format string) {
-	buf := bytes.NewBuffer(percentBytes)
+/*
+NewFormatter returns a custom formatter that satisfies the fmt.Formatter
+interface.  As a result, it integrates cleanly with standard fmt package
+printing functions.  The formatter is useful for inline printing of smaller data
+types similar to the standard %v format specifier.
 
-	for _, flag := range supportedFlags {
-		if f.fs.Flag(int(flag)) {
-			buf.WriteRune(flag)
-		}
-	}
+The custom formatter only responds to the %v (most compact), %+v (adds pointer
+addresses), %#v (adds types), or %#+v (adds types and pointer addresses) verb
+combinations.  Any other verbs such as %x and %q will be sent to the the
+standard fmt package for formatting.  In addition, the custom formatter ignores
+the width and precision arguments (however they will still work on the format
+specifiers not handled by the custom formatter).
 
-	buf.WriteRune('v')
-
-	format = buf.String()
-	return format
+Typically this function shouldn't be called directly.  It is much easier to make
+use of the custom formatter by calling one of the convenience functions such as
+Printf, Println, or Fprintf.
+*/
+func NewFormatter(v any) fmt.Formatter {
+	return newFormatter(&Config, v)
 }
 
-// constructOrigFormat recreates the original format string including precision
-// and width information to pass along to the standard fmt package.  This allows
-// automatic deferral of all format strings this package doesn't support.
-func (f *formatState) constructOrigFormat(verb rune) (format string) {
-	buf := bytes.NewBuffer(percentBytes)
-
-	for _, flag := range supportedFlags {
-		if f.fs.Flag(int(flag)) {
-			buf.WriteRune(flag)
-		}
-	}
-
-	if width, ok := f.fs.Width(); ok {
-		buf.WriteString(strconv.Itoa(width))
-	}
-
-	if precision, ok := f.fs.Precision(); ok {
-		buf.Write(precisionBytes)
-		buf.WriteString(strconv.Itoa(precision))
-	}
-
-	buf.WriteRune(verb)
-
-	format = buf.String()
-	return format
+// newFormatter is a helper function that combines the logic from different methods
+// with varying config states.
+func newFormatter(cs *ConfigState, v any) fmt.Formatter {
+	fs := &formatState{value: v, cs: cs}
+	fs.pointers = make(map[uintptr]int)
+	return fs
 }
 
 // unpackValue returns values inside of non-nil interfaces when possible and
@@ -373,31 +360,48 @@ func (f *formatState) Format(fs fmt.State, verb rune) {
 	f.format(reflect.ValueOf(f.value))
 }
 
-// newFormatter is a helper function to consolidate the logic from the various
-// public methods which take varying config states.
-func newFormatter(cs *ConfigState, v any) fmt.Formatter {
-	fs := &formatState{value: v, cs: cs}
-	fs.pointers = make(map[uintptr]int)
-	return fs
+// constructOrigFormat recreates the original format string including precision
+// and width information to pass along to the standard fmt package.  This allows
+// automatic deferral of all format strings this package doesn't support.
+func (f *formatState) constructOrigFormat(verb rune) (format string) {
+	buf := bytes.NewBuffer(percentBytes)
+
+	for _, flag := range supportedFlags {
+		if f.fs.Flag(int(flag)) { // fmt.State 定义了如何访问格式化输出的状态，但并没有明确说明标志（flags）是如何存储的，因为这些实现细节通常都隐藏在 fmt 包的具体实现中。
+			buf.WriteRune(flag)
+		}
+	}
+
+	if width, ok := f.fs.Width(); ok {
+		buf.WriteString(strconv.Itoa(width))
+	}
+
+	if precision, ok := f.fs.Precision(); ok {
+		buf.Write(precisionBytes)
+		buf.WriteString(strconv.Itoa(precision))
+	}
+
+	buf.WriteRune(verb)
+
+	format = buf.String()
+	return format
 }
 
-/*
-NewFormatter returns a custom formatter that satisfies the fmt.Formatter
-interface.  As a result, it integrates cleanly with standard fmt package
-printing functions.  The formatter is useful for inline printing of smaller data
-types similar to the standard %v format specifier.
+// buildDefaultFormat recreates the original format string without precision
+// and width information to pass in to fmt.Sprintf in the case of an
+// unrecognized type.  Unless new types are added to the language, this
+// function won't ever be called.
+func (f *formatState) buildDefaultFormat() (format string) {
+	buf := bytes.NewBuffer(percentBytes)
 
-The custom formatter only responds to the %v (most compact), %+v (adds pointer
-addresses), %#v (adds types), or %#+v (adds types and pointer addresses) verb
-combinations.  Any other verbs such as %x and %q will be sent to the the
-standard fmt package for formatting.  In addition, the custom formatter ignores
-the width and precision arguments (however they will still work on the format
-specifiers not handled by the custom formatter).
+	for _, flag := range supportedFlags {
+		if f.fs.Flag(int(flag)) {
+			buf.WriteRune(flag)
+		}
+	}
 
-Typically this function shouldn't be called directly.  It is much easier to make
-use of the custom formatter by calling one of the convenience functions such as
-Printf, Println, or Fprintf.
-*/
-func NewFormatter(v any) fmt.Formatter {
-	return newFormatter(&Config, v)
+	buf.WriteRune('v')
+
+	format = buf.String()
+	return format
 }

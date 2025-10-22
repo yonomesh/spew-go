@@ -37,9 +37,8 @@ type ConfigState struct {
 	// invoked for types that implement them.
 	DisableMethods bool
 
-	// DisablePointerMethods specifies whether or not to check for and invoke
-	// error and Stringer interfaces on types which only accept a pointer
-	// receiver when the current type is not a pointer.
+	// DisablePointerMethods determines whether to check and call the error and Stringer methods
+	// on types that only have pointer receivers, when the current type is not a pointer.
 	//
 	// NOTE: This might be an unsafe action since calling one of these methods
 	// with a pointer receiver could technically mutate the value, however,
@@ -66,73 +65,75 @@ type ConfigState struct {
 	// interface and return immediately instead of continuing to recurse into
 	// the internals of the data type.
 	//
-	// NOTE: This flag does not have any effect if method invocation is disabled
-	// via the DisableMethods or DisablePointerMethods options.
+	// Note:
+	//
+	// This flag does not effect if enable DisableMethods
+	// or DisablePointerMethods options.
 	ContinueOnMethod bool
 
-	// SortKeys specifies map keys should be sorted before being printed. Use
-	// this to have a more deterministic, diffable output.  Note that only
-	// native types (bool, int, uint, floats, uintptr and string) and types
-	// that support the error or Stringer interfaces (if methods are
-	// enabled) are supported, with other types sorted according to the
-	// reflect.Value.String() output which guarantees display stability.
+	// SortKeys specifies map keys should be sorted before printing.
+	//
+	// Note:
+	//
+	// Only native types (bool, int, uint, float, uintptr, and string)
+	// and types that implement the error or Stringer interfaces are supported.
+	//
+	// Other types will be sorted based on their reflect.Value.String() output,
+	// which ensures stable display.
 	SortKeys bool
 
-	// SpewKeys specifies that, as a last resort attempt, map keys should
-	// be spewed to strings and sorted by those strings.  This is only
-	// considered if SortKeys is true.
+	// If SpewKeys is true, and the map cannot be sorted, it will attempt to convert
+	// the map keys to strings and sort the map by these string values.
+	//
+	// This is only considered if SortKeys is true.
 	SpewKeys bool
 }
 
-// Config is the active configuration of the top-level functions.
-// The configuration can be changed by modifying the contents of spew.Config.
+// Config is the global configuration of the top-level functions.
 var Config = ConfigState{Indent: " "}
 
-// Errorf is a wrapper for fmt.Errorf that treats each argument as if it were
-// passed with a Formatter interface returned by c.NewFormatter.  It returns
-// the formatted string as a value that satisfies error.  See NewFormatter
-// for formatting details.
+// NewDefaultConfig returns a ConfigState with the following default settings.
 //
-// This function is shorthand for the following syntax:
-//
-//	fmt.Errorf(format, c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Errorf(format string, a ...any) (err error) {
-	return fmt.Errorf(format, c.convertArgs(a)...)
+//	Indent: " "
+//	MaxDepth: 0
+//	DisableMethods: false
+//	DisablePointerMethods: false
+//	ContinueOnMethod: false
+//	SortKeys: false
+func NewDefaultConfig() *ConfigState {
+	return &ConfigState{Indent: " "}
 }
 
-// Fprint is a wrapper for fmt.Fprint that treats each argument as if it were
-// passed with a Formatter interface returned by c.NewFormatter.  It returns
-// the number of bytes written and any write error encountered.  See
-// NewFormatter for formatting details.
-//
-// This function is shorthand for the following syntax:
-//
-//	fmt.Fprint(w, c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Fprint(w io.Writer, a ...any) (n int, err error) {
-	return fmt.Fprint(w, c.convertArgs(a)...)
+/*
+NewFormatter returns a custom formatter that satisfies the fmt.Formatter
+interface.  As a result, it integrates cleanly with standard fmt package
+printing functions.  The formatter is useful for inline printing of smaller data
+types similar to the standard %v format specifier.
+
+The custom formatter only responds to the %v (most compact), %+v (adds pointer
+addresses), %#v (adds types), and %#+v (adds types and pointer addresses) verb
+combinations.  Any other verbs such as %x and %q will be sent to the the
+standard fmt package for formatting.  In addition, the custom formatter ignores
+the width and precision arguments (however they will still work on the format
+specifiers not handled by the custom formatter).
+
+Typically this function shouldn't be called directly.  It is much easier to make
+use of the custom formatter by calling one of the convenience functions such as
+c.Printf, c.Println, or c.Printf.
+*/
+func (c *ConfigState) NewFormatter(v any) fmt.Formatter {
+	return newFormatter(c, v)
 }
 
-// Fprintf is a wrapper for fmt.Fprintf that treats each argument as if it were
-// passed with a Formatter interface returned by c.NewFormatter.  It returns
-// the number of bytes written and any write error encountered.  See
-// NewFormatter for formatting details.
-//
-// This function is shorthand for the following syntax:
-//
-//	fmt.Fprintf(w, format, c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Fprintf(w io.Writer, format string, a ...any) (n int, err error) {
-	return fmt.Fprintf(w, format, c.convertArgs(a)...)
-}
-
-// Fprintln is a wrapper for fmt.Fprintln that treats each argument as if it
-// passed with a Formatter interface returned by c.NewFormatter.  See
-// NewFormatter for formatting details.
-//
-// This function is shorthand for the following syntax:
-//
-//	fmt.Fprintln(w, c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Fprintln(w io.Writer, a ...any) (n int, err error) {
-	return fmt.Fprintln(w, c.convertArgs(a)...)
+// convertArgs accepts a slice of arguments and returns a slice of the same
+// length with each argument converted to a spew Formatter interface using
+// the ConfigState associated with s.
+func (c *ConfigState) convertArgs(args []any) (formatters []any) {
+	formatters = make([]any, len(args))
+	for index, arg := range args {
+		formatters[index] = newFormatter(c, arg)
+	}
+	return formatters
 }
 
 // Print is a wrapper for fmt.Print that treats each argument as if it were
@@ -171,6 +172,41 @@ func (c *ConfigState) Println(a ...any) (n int, err error) {
 	return fmt.Println(c.convertArgs(a)...)
 }
 
+// Fprint is a wrapper for fmt.Fprint that treats each argument as if it were
+// passed with a Formatter interface returned by c.NewFormatter.  It returns
+// the number of bytes written and any write error encountered.  See
+// NewFormatter for formatting details.
+//
+// This function is shorthand for the following syntax:
+//
+//	fmt.Fprint(w, c.NewFormatter(a), c.NewFormatter(b))
+func (c *ConfigState) Fprint(w io.Writer, a ...any) (n int, err error) {
+	return fmt.Fprint(w, c.convertArgs(a)...)
+}
+
+// Fprintf is a wrapper for fmt.Fprintf that treats each argument as if it were
+// passed with a Formatter interface returned by c.NewFormatter.  It returns
+// the number of bytes written and any write error encountered.  See
+// NewFormatter for formatting details.
+//
+// This function is shorthand for the following syntax:
+//
+//	fmt.Fprintf(w, format, c.NewFormatter(a), c.NewFormatter(b))
+func (c *ConfigState) Fprintf(w io.Writer, format string, a ...any) (n int, err error) {
+	return fmt.Fprintf(w, format, c.convertArgs(a)...)
+}
+
+// Fprintln is a wrapper for fmt.Fprintln that treats each argument as if it
+// passed with a Formatter interface returned by c.NewFormatter.  See
+// NewFormatter for formatting details.
+//
+// This function is shorthand for the following syntax:
+//
+//	fmt.Fprintln(w, c.NewFormatter(a), c.NewFormatter(b))
+func (c *ConfigState) Fprintln(w io.Writer, a ...any) (n int, err error) {
+	return fmt.Fprintln(w, c.convertArgs(a)...)
+}
+
 // Sprint is a wrapper for fmt.Sprint that treats each argument as if it were
 // passed with a Formatter interface returned by c.NewFormatter.  It returns
 // the resulting string.  See NewFormatter for formatting details.
@@ -204,30 +240,9 @@ func (c *ConfigState) Sprintln(a ...any) string {
 	return fmt.Sprintln(c.convertArgs(a)...)
 }
 
-/*
-NewFormatter returns a custom formatter that satisfies the fmt.Formatter
-interface.  As a result, it integrates cleanly with standard fmt package
-printing functions.  The formatter is useful for inline printing of smaller data
-types similar to the standard %v format specifier.
-
-The custom formatter only responds to the %v (most compact), %+v (adds pointer
-addresses), %#v (adds types), and %#+v (adds types and pointer addresses) verb
-combinations.  Any other verbs such as %x and %q will be sent to the the
-standard fmt package for formatting.  In addition, the custom formatter ignores
-the width and precision arguments (however they will still work on the format
-specifiers not handled by the custom formatter).
-
-Typically this function shouldn't be called directly.  It is much easier to make
-use of the custom formatter by calling one of the convenience functions such as
-c.Printf, c.Println, or c.Printf.
-*/
-func (c *ConfigState) NewFormatter(v interface{}) fmt.Formatter {
-	return newFormatter(c, v)
-}
-
 // Fdump formats and displays the passed arguments to io.Writer w.  It formats
 // exactly the same as Dump.
-func (c *ConfigState) Fdump(w io.Writer, a ...any) {
+func (c *ConfigState) Fdump(w io.Writer, a ...interface{}) {
 	fdump(c, w, a...)
 }
 
@@ -267,25 +282,14 @@ func (c *ConfigState) Sdump(a ...any) string {
 	return buf.String()
 }
 
-// convertArgs accepts a slice of arguments and returns a slice of the same
-// length with each argument converted to a spew Formatter interface using
-// the ConfigState associated with s.
-func (c *ConfigState) convertArgs(args []any) (formatters []any) {
-	formatters = make([]any, len(args))
-	for index, arg := range args {
-		formatters[index] = newFormatter(c, arg)
-	}
-	return formatters
-}
-
-// NewDefaultConfig returns a ConfigState with the following default settings.
+// Errorf is a wrapper for fmt.Errorf that treats each argument as if it were
+// passed with a Formatter interface returned by c.NewFormatter.  It returns
+// the formatted string as a value that satisfies error.  See NewFormatter
+// for formatting details.
 //
-//	Indent: " "
-//	MaxDepth: 0
-//	DisableMethods: false
-//	DisablePointerMethods: false
-//	ContinueOnMethod: false
-//	SortKeys: false
-func NewDefaultConfig() *ConfigState {
-	return &ConfigState{Indent: " "}
+// This function is shorthand for the following syntax:
+//
+//	fmt.Errorf(format, c.NewFormatter(a), c.NewFormatter(b))
+func (c *ConfigState) Errorf(format string, a ...any) (err error) {
+	return fmt.Errorf(format, c.convertArgs(a)...)
 }

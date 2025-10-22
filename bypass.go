@@ -43,6 +43,18 @@ const flagKindMask = flag(0x1f)
 // Different versions of Go have used different
 // bit layouts for the flags type. This table
 // records the known combinations.
+//
+// # Ref
+//
+// go 1.7 https://github.com/golang/go/blob/0d818588685976407c81c60d2fda289361cbc8ec/src/reflect/value.go#L67-L77
+//
+// go 1.17 https://github.com/golang/go/blob/ec5170397c724a8ae440b2bc529f857c86f0e6b1/src/reflect/value.go#L70-L80
+//
+// go 1.20 https://github.com/golang/go/blob/de4748c47c67392a57f250714509f590f68ad395/src/reflect/value.go#L72-L82
+//
+// go 1.23 https://github.com/golang/go/blob/6885bad7dd86880be6929c02085e5c7a67ff2887/src/reflect/value.go#L73-L83
+//
+// go 1.25 https://github.com/golang/go/blob/6e676ab2b809d46623acb5988248d95d1eb7939c/src/reflect/value.go#L73-L83
 var okFlags = []struct {
 	ro, addr flag
 }{{

@@ -5,16 +5,40 @@ import (
 	"io"
 )
 
-// Errorf is a wrapper for fmt.Errorf that treats each argument as if it were
+// Print is a wrapper for fmt.Print that treats each argument as if it were
 // passed with a default Formatter interface returned by NewFormatter.  It
-// returns the formatted string as a value that satisfies error.  See
+// returns the number of bytes written and any write error encountered.  See
 // NewFormatter for formatting details.
 //
 // This function is shorthand for the following syntax:
 //
-//	fmt.Errorf(format, spew.NewFormatter(a), spew.NewFormatter(b))
-func Errorf(format string, a ...any) (err error) {
-	return fmt.Errorf(format, convertArgs(a)...)
+//	fmt.Print(spew.NewFormatter(a), spew.NewFormatter(b))
+func Print(a ...any) (n int, err error) {
+	return fmt.Print(convertArgs(a)...)
+}
+
+// Printf is a wrapper for fmt.Printf that treats each argument as if it were
+// passed with a default Formatter interface returned by NewFormatter.  It
+// returns the number of bytes written and any write error encountered.  See
+// NewFormatter for formatting details.
+//
+// This function is shorthand for the following syntax:
+//
+//	fmt.Printf(format, spew.NewFormatter(a), spew.NewFormatter(b))
+func Printf(format string, a ...any) (n int, err error) {
+	return fmt.Printf(format, convertArgs(a)...)
+}
+
+// Println is a wrapper for fmt.Println that treats each argument as if it were
+// passed with a default Formatter interface returned by NewFormatter.  It
+// returns the number of bytes written and any write error encountered.  See
+// NewFormatter for formatting details.
+//
+// This function is shorthand for the following syntax:
+//
+//	fmt.Println(spew.NewFormatter(a), spew.NewFormatter(b))
+func Println(a ...any) (n int, err error) {
+	return fmt.Println(convertArgs(a)...)
 }
 
 // Fprint is a wrapper for fmt.Fprint that treats each argument as if it were
@@ -52,42 +76,6 @@ func Fprintln(w io.Writer, a ...any) (n int, err error) {
 	return fmt.Fprintln(w, convertArgs(a)...)
 }
 
-// Print is a wrapper for fmt.Print that treats each argument as if it were
-// passed with a default Formatter interface returned by NewFormatter.  It
-// returns the number of bytes written and any write error encountered.  See
-// NewFormatter for formatting details.
-//
-// This function is shorthand for the following syntax:
-//
-//	fmt.Print(spew.NewFormatter(a), spew.NewFormatter(b))
-func Print(a ...any) (n int, err error) {
-	return fmt.Print(convertArgs(a)...)
-}
-
-// Printf is a wrapper for fmt.Printf that treats each argument as if it were
-// passed with a default Formatter interface returned by NewFormatter.  It
-// returns the number of bytes written and any write error encountered.  See
-// NewFormatter for formatting details.
-//
-// This function is shorthand for the following syntax:
-//
-//	fmt.Printf(format, spew.NewFormatter(a), spew.NewFormatter(b))
-func Printf(format string, a ...any) (n int, err error) {
-	return fmt.Printf(format, convertArgs(a)...)
-}
-
-// Println is a wrapper for fmt.Println that treats each argument as if it were
-// passed with a default Formatter interface returned by NewFormatter.  It
-// returns the number of bytes written and any write error encountered.  See
-// NewFormatter for formatting details.
-//
-// This function is shorthand for the following syntax:
-//
-//	fmt.Println(spew.NewFormatter(a), spew.NewFormatter(b))
-func Println(a ...any) (n int, err error) {
-	return fmt.Println(convertArgs(a)...)
-}
-
 // Sprint is a wrapper for fmt.Sprint that treats each argument as if it were
 // passed with a default Formatter interface returned by NewFormatter.  It
 // returns the resulting string.  See NewFormatter for formatting details.
@@ -119,6 +107,18 @@ func Sprintf(format string, a ...any) string {
 //	fmt.Sprintln(spew.NewFormatter(a), spew.NewFormatter(b))
 func Sprintln(a ...any) string {
 	return fmt.Sprintln(convertArgs(a)...)
+}
+
+// Errorf is a wrapper for fmt.Errorf that treats each argument as if it were
+// passed with a default Formatter interface returned by NewFormatter.  It
+// returns the formatted string as a value that satisfies error.  See
+// NewFormatter for formatting details.
+//
+// This function is shorthand for the following syntax:
+//
+//	fmt.Errorf(format, spew.NewFormatter(a), spew.NewFormatter(b))
+func Errorf(format string, a ...any) (err error) {
+	return fmt.Errorf(format, convertArgs(a)...)
 }
 
 // convertArgs accepts a slice of arguments and returns a slice of the same
