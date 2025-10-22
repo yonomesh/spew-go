@@ -79,15 +79,15 @@ func ExampleDump() {
 	Dump(s1, f, b)
 
 	// Output:
-	// (spew_test.Foo) {
-	//  unexportedField: (spew_test.Bar) {
+	// (spew.Foo) {
+	//  unexportedField: (spew.Bar) {
 	//   data: (uintptr) <nil>
 	//  },
 	//  ExportedField: (map[interface {}]interface {}) (len=1) {
 	//   (string) (len=3) "one": (bool) true
 	//  }
 	// }
-	// (spew_test.Flag) Unknown flag (5)
+	// (spew.Flag) Unknown flag (5)
 	// ([]uint8) (len=34 cap=34) {
 	//  00000000  11 12 13 14 15 16 17 18  19 1a 1b 1c 1d 1e 1f 20  |............... |
 	//  00000010  21 22 23 24 25 26 27 28  29 2a 2b 2c 2d 2e 2f 30  |!"#$%&'()*+,-./0|
@@ -158,16 +158,16 @@ func ExampleConfigState_Dump() {
 	scs2.Dump(s1)
 
 	// Output:
-	// (spew_test.Foo) {
-	// 	unexportedField: (spew_test.Bar) {
+	// (spew.Foo) {
+	// 	unexportedField: (spew.Bar) {
 	// 		data: (uintptr) <nil>
 	// 	},
 	// 	ExportedField: (map[interface {}]interface {}) (len=1) {
 	//		(string) (len=3) "one": (bool) true
 	// 	}
 	// }
-	// (spew_test.Foo) {
-	//  unexportedField: (spew_test.Bar) {
+	// (spew.Foo) {
+	//  unexportedField: (spew.Bar) {
 	//   data: (uintptr) <nil>
 	//  },
 	//  ExportedField: (map[interface {}]interface {}) (len=1) {

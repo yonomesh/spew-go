@@ -511,7 +511,7 @@ func addArrayFormatterTests() {
 	pv2 := &v2
 	v2Addr := fmt.Sprintf("%p", pv2)
 	pv2Addr := fmt.Sprintf("%p", &pv2)
-	v2t := "[3]spew_test.pstringer"
+	v2t := "[3]spew.pstringer"
 	v2sp := "[stringer 1 stringer 2 stringer 3]"
 	v2s := v2sp
 	if UnsafeDisabled {
@@ -596,7 +596,7 @@ func addSliceFormatterTests() {
 	pv2 := &v2
 	v2Addr := fmt.Sprintf("%p", pv2)
 	pv2Addr := fmt.Sprintf("%p", &pv2)
-	v2t := "[]spew_test.pstringer"
+	v2t := "[]spew.pstringer"
 	v2s := "[stringer 1 stringer 2 stringer 3]"
 	addFormatterTest("%v", v2, v2s)
 	addFormatterTest("%v", pv2, "<*>"+v2s)
@@ -787,7 +787,7 @@ func addMapFormatterTests() {
 	pv2 := &v2
 	v2Addr := fmt.Sprintf("%p", pv2)
 	pv2Addr := fmt.Sprintf("%p", &pv2)
-	v2t := "map[spew_test.pstringer]spew_test.pstringer"
+	v2t := "map[spew.pstringer]spew.pstringer"
 	v2s := "map[stringer one:stringer 1]"
 	if UnsafeDisabled {
 		v2s = "map[one:1]"
@@ -876,7 +876,7 @@ func addStructFormatterTests() {
 	pv := &v
 	vAddr := fmt.Sprintf("%p", pv)
 	pvAddr := fmt.Sprintf("%p", &pv)
-	vt := "spew_test.s1"
+	vt := "spew.s1"
 	vt2 := "int8"
 	vt3 := "uint8"
 	vs := "{127 255}"
@@ -909,8 +909,8 @@ func addStructFormatterTests() {
 	pv2 := &v2
 	v2Addr := fmt.Sprintf("%p", pv2)
 	pv2Addr := fmt.Sprintf("%p", &pv2)
-	v2t := "spew_test.s2"
-	v2t2 := "spew_test.s1"
+	v2t := "spew.s2"
+	v2t2 := "spew.s1"
 	v2t3 := "int8"
 	v2t4 := "uint8"
 	v2t5 := "bool"
@@ -946,8 +946,8 @@ func addStructFormatterTests() {
 	pv3 := &v3
 	v3Addr := fmt.Sprintf("%p", pv3)
 	pv3Addr := fmt.Sprintf("%p", &pv3)
-	v3t := "spew_test.s3"
-	v3t2 := "spew_test.pstringer"
+	v3t := "spew.s3"
+	v3t2 := "spew.pstringer"
 	v3s := "{stringer test stringer test2}"
 	v3sp := v3s
 	v3s2 := "{s:stringer test S:stringer test2}"
@@ -987,8 +987,8 @@ func addStructFormatterTests() {
 	eAddr := fmt.Sprintf("%p", &e)
 	v4Addr := fmt.Sprintf("%p", pv4)
 	pv4Addr := fmt.Sprintf("%p", &pv4)
-	v4t := "spew_test.embedwrap"
-	v4t2 := "spew_test.embed"
+	v4t := "spew.embedwrap"
+	v4t2 := "spew.embed"
 	v4t3 := "string"
 	v4s := "{<*>{embedstr} <*>{embedstr}}"
 	v4s2 := "{embed:<*>(" + eAddr + "){a:embedstr} e:<*>(" + eAddr +
@@ -1247,7 +1247,7 @@ func addCircularFormatterTests() {
 	pv := &v
 	vAddr := fmt.Sprintf("%p", pv)
 	pvAddr := fmt.Sprintf("%p", &pv)
-	vt := "spew_test.circular"
+	vt := "spew.circular"
 	vs := "{<*>{<*><shown>}}"
 	vs2 := "{<*><shown>}"
 	vs3 := "{c:<*>(" + vAddr + "){c:<*>(" + vAddr + ")<shown>}}"
@@ -1278,8 +1278,8 @@ func addCircularFormatterTests() {
 	ts2Addr := fmt.Sprintf("%p", &ts2)
 	v2Addr := fmt.Sprintf("%p", pv2)
 	pv2Addr := fmt.Sprintf("%p", &pv2)
-	v2t := "spew_test.xref1"
-	v2t2 := "spew_test.xref2"
+	v2t := "spew.xref1"
+	v2t2 := "spew.xref2"
 	v2s := "{<*>{<*>{<*><shown>}}}"
 	v2s2 := "{<*>{<*><shown>}}"
 	v2s3 := "{ps2:<*>(" + ts2Addr + "){ps1:<*>(" + v2Addr + "){ps2:<*>(" +
@@ -1317,9 +1317,9 @@ func addCircularFormatterTests() {
 	tic3Addr := fmt.Sprintf("%p", &tic3)
 	v3Addr := fmt.Sprintf("%p", pv3)
 	pv3Addr := fmt.Sprintf("%p", &pv3)
-	v3t := "spew_test.indirCir1"
-	v3t2 := "spew_test.indirCir2"
-	v3t3 := "spew_test.indirCir3"
+	v3t := "spew.indirCir1"
+	v3t2 := "spew.indirCir2"
+	v3t3 := "spew.indirCir3"
 	v3s := "{<*>{<*>{<*>{<*><shown>}}}}"
 	v3s2 := "{<*>{<*>{<*><shown>}}}"
 	v3s3 := "{ps2:<*>(" + tic2Addr + "){ps3:<*>(" + tic3Addr + "){ps1:<*>(" +
@@ -1356,7 +1356,7 @@ func addPanicFormatterTests() {
 	pv := &v
 	vAddr := fmt.Sprintf("%p", pv)
 	pvAddr := fmt.Sprintf("%p", &pv)
-	vt := "spew_test.panicer"
+	vt := "spew.panicer"
 	vs := "(PANIC=test panic)127"
 	addFormatterTest("%v", v, vs)
 	addFormatterTest("%v", pv, "<*>"+vs)
@@ -1383,7 +1383,7 @@ func addErrorFormatterTests() {
 	pv := &v
 	vAddr := fmt.Sprintf("%p", pv)
 	pvAddr := fmt.Sprintf("%p", &pv)
-	vt := "spew_test.customError"
+	vt := "spew.customError"
 	vs := "error: 127"
 	addFormatterTest("%v", v, vs)
 	addFormatterTest("%v", pv, "<*>"+vs)

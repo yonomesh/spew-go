@@ -3,6 +3,7 @@ package spew
 import (
 	"fmt"
 	"reflect"
+	"slices"
 	"testing"
 )
 
@@ -88,12 +89,7 @@ func stringizeWants(wants []string) string {
 // testFailed returns whether or not a test failed by checking if the result
 // of the test is in the slice of wanted strings.
 func testFailed(result string, wants []string) bool {
-	for _, want := range wants {
-		if result == want {
-			return false
-		}
-	}
-	return true
+	return !slices.Contains(wants, result)
 }
 
 type sortableStruct struct {
@@ -115,7 +111,7 @@ type sortTestCase struct {
 
 func helpTestSortValues(tests []sortTestCase, cs *ConfigState, t *testing.T) {
 	getInterfaces := func(values []reflect.Value) []interface{} {
-		interfaces := []interface{}{}
+		interfaces := []any{}
 		for _, v := range values {
 			interfaces = append(interfaces, v.Interface())
 		}

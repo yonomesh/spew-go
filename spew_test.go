@@ -169,19 +169,17 @@ func initSpewTests() {
 		{scsNoPmethods, fCSFprint, "", tps, "test"},
 		{scsNoPmethods, fCSFprint, "", &tps, "<*>stringer test"},
 		{scsMaxDepth, fCSFprint, "", dt, "{{<max>} [<max>] [<max>] map[<max>]}"},
-		{scsMaxDepth, fCSFdump, "", dt, "(spew_test.depthTester) {\n" +
-			" ic: (spew_test.indirCir1) {\n  <max depth reached>\n },\n" +
+		{scsMaxDepth, fCSFdump, "", dt, "(spew.depthTester) {\n" +
+			" ic: (spew.indirCir1) {\n  <max depth reached>\n },\n" +
 			" arr: ([1]string) (len=1 cap=1) {\n  <max depth reached>\n },\n" +
 			" slice: ([]string) (len=1 cap=1) {\n  <max depth reached>\n },\n" +
 			" m: (map[string]int) (len=1) {\n  <max depth reached>\n }\n}\n"},
 		{scsContinue, fCSFprint, "", ts, "(stringer test) test"},
-		{scsContinue, fCSFdump, "", ts, "(spew_test.stringer) " +
-			"(len=4) (stringer test) \"test\"\n"},
+		{scsContinue, fCSFdump, "", ts, "(spew.stringer) " + "(len=4) (stringer test) \"test\"\n"},
 		{scsContinue, fCSFprint, "", te, "(error: 10) 10"},
-		{scsContinue, fCSFdump, "", te, "(spew_test.customError) " +
-			"(error: 10) 10\n"},
+		{scsContinue, fCSFdump, "", te, "(spew.customError) " + "(error: 10) 10\n"},
 		{scsNoPtrAddr, fCSFprint, "", tptr, "<*>{<*>{}}"},
-		{scsNoPtrAddr, fCSSdump, "", tptr, "(*spew_test.ptrTester)({\ns: (*struct {})({\n})\n})\n"},
+		{scsNoPtrAddr, fCSSdump, "", tptr, "(*spew.ptrTester)({\ns: (*struct {})({\n})\n})\n"},
 		{scsNoCap, fCSSdump, "", make([]string, 0, 10), "([]string) {\n}\n"},
 		{scsNoCap, fCSSdump, "", make([]string, 1, 10), "([]string) (len=1) {\n(string) \"\"\n}\n"},
 	}
@@ -196,6 +194,7 @@ func TestSpew(t *testing.T) {
 		buf := new(bytes.Buffer)
 		switch test.f {
 		case fCSFdump:
+			fmt.Println(test)
 			test.cs.Fdump(buf, test.in)
 
 		case fCSFprint:
