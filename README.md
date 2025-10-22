@@ -1,42 +1,27 @@
 Spew-go
 =======
 
-Spew-go implements a deep pretty printer for Go data structures to aid in
-debugging.  A comprehensive suite of tests with 100% test coverage is provided
-to ensure proper functionality.  See `test_coverage.txt` for the gocov coverage
-report.  
-
-If you're interested in reading about how this package came to life and some
-of the challenges involved in providing a deep pretty printer, there is a blog
-post about it
-[here](https://web.archive.org/web/20160304013555/https://blog.cyphertite.com/go-spew-a-journey-into-dumping-go-data-structures/).
+- `spew-go` implements a deep pretty printer for Go data structures to aid in debugging
+- `spew-go` relies on the `unsafe` package to perform some of the more advanced features
+- So, we recommend that you **only use this package in xxx_test.go**
 
 ## Documentation
 
-Full `go doc` style documentation for the project can be viewed online without
-installing this package by using the excellent GoDoc site here:
+go doc 
+- https://pkg.go.dev/github.com/yonomesh/spew-go
 
-```
-https://pkg.go.dev/github.com/davecgh/go-spew/spew
-# New
-https://pkg.go.dev/github.com/yonomesh/spew-go/spew
-```
-## Installation
-
-```bash
-$ go get -u github.com/davecgh/go-spew/spew
-```
+`spew-go` is developed based on [davecgh/go-spew](https://github.com/davecgh/go-spew). The original author has a blog post about go-spew.
+- [Go-spew: A Journey into Dumping Go Data Structures](https://github.com/yonomesh/spew-go/blob/main/docs/Go-spew%3A%20A%20Journey%20into%20Dumping%20Go%20Data%20Structures.md)
+- [raw blog](https://web.archive.org/web/20160304013555/https://blog.cyphertite.com/go-spew-a-journey-into-dumping-go-data-structures/).
 
 ## Quick Start
 
-Add this import line to the file you're working in:
-
 ```Go
-import "github.com/davecgh/go-spew/spew"
+import "github.com/yonomesh/spew-go"
 ```
 
 To dump a variable with full newlines, indentation, type, and pointer
-information use Dump, Fdump, or Sdump:
+information use `Dump`, `Fdump`, or `Sdump`:
 
 ```Go
 spew.Dump(myVar1, myVar2, ...)
