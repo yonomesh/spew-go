@@ -1,18 +1,9 @@
 Spew-go
 =======
 
-- `spew-go` implements a deep pretty printer for Go data structures to aid in debugging
-- `spew-go` relies on the `unsafe` package to perform some of the more advanced features
-- So, we recommend that you **only use this package in xxx_test.go**
-
-## Documentation
-
-go doc 
-- https://pkg.go.dev/github.com/yonomesh/spew-go
-
-`spew-go` is developed based on [davecgh/go-spew](https://github.com/davecgh/go-spew). The original author has a blog post about go-spew.
-- [Go-spew: A Journey into Dumping Go Data Structures](https://github.com/yonomesh/spew-go/blob/main/docs/Go-spew%3A%20A%20Journey%20into%20Dumping%20Go%20Data%20Structures.md)
-- [raw blog](https://web.archive.org/web/20160304013555/https://blog.cyphertite.com/go-spew-a-journey-into-dumping-go-data-structures/).
+- **spew-go** is a library that implements a **deep pretty printer** for Go data structures, primarily intended **to aid in debugging**.
+- Some of its **advanced features rely** on the **`unsafe`** **package**.
+- **For this reason**, we strongly recommend that you **only use this package** within **`*_test.go`** **files** (e.g., in unit tests) and **avoid using it in production code**.
 
 ## Quick Start
 
@@ -164,6 +155,15 @@ options. See the ConfigState documentation for more details.
 	if SortKeys is true.
 
 ```
+
+## Documentation
+
+go doc 
+- https://pkg.go.dev/github.com/yonomesh/spew-go
+
+`spew-go` is developed based on [davecgh/go-spew](https://github.com/davecgh/go-spew). The original author has a blog post about go-spew.
+- [Go-spew: A Journey into Dumping Go Data Structures](https://github.com/yonomesh/spew-go/blob/main/docs/Go-spew%3A%20A%20Journey%20into%20Dumping%20Go%20Data%20Structures.md)
+- [raw blog](https://web.archive.org/web/20160304013555/https://blog.cyphertite.com/go-spew-a-journey-into-dumping-go-data-structures/).
 
 ## Unsafe Package Dependency
 
